@@ -21,6 +21,11 @@ variable "block_public_access" {
   default = true
 }
 
+variable "enable_bucket_versioning" {
+  type    = bool
+  default = false
+}
+
 variable "bucket_policy_document" {
   type    = string
   default = null

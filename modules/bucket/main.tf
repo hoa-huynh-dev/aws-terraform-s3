@@ -16,6 +16,13 @@ resource "aws_s3_bucket_public_access_block" "bucket_public_access_block" {
   restrict_public_buckets = var.block_public_access
 }
 
+resource "aws_s3_bucket_versioning" "bucket_versioning" {
+  bucket = aws_s3_bucket.bucket.bucket
+  versioning_configuration {
+    status = var.enable_bucket_versioning ? "Enabled" : "Suspended"
+  }
+}
+
 resource "aws_s3_bucket_policy" "bucket_policy" {
   count  = var.bucket_policy_document == null ? 0 : 1
   bucket = aws_s3_bucket.bucket.bucket
