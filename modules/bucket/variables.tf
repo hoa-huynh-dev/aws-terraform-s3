@@ -20,3 +20,8 @@ variable "block_public_access" {
   type    = bool
   default = true
 }
+
+variable "bucket_policy_document" {
+  type    = string
+  default = null
+}
