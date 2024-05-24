@@ -17,6 +17,7 @@ resource "aws_s3_bucket_public_access_block" "bucket_public_access_block" {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
+  count  = var.bucket_policy_document == null ? 0 : 1
   bucket = aws_s3_bucket.bucket.bucket
   policy = var.bucket_policy_document
 }
