@@ -10,3 +10,13 @@ variable "bucket_tags" {
   type    = map(string)
   default = {}
 }
+
+variable "force_destroy" {
+  type    = bool
+  default = false
+}
+
+variable "block_public_access" {
+  type    = bool
+  default = true
+}
