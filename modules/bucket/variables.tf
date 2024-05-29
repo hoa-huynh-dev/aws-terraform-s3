@@ -32,7 +32,23 @@ variable "bucket_policy_document" {
 }
 
 variable "bucket_lifecycle_rules" {
-  type = list(object(map()))
+  type = list(
+    object(
+      {
+        id     = string
+        status = string
+        transitions = list(
+          object(
+            {
+              days          = number
+              storage_class = string
+            }
+          )
+        )
+      }
+    )
+  )
+
   default = [
     {
       id     = "rule"
