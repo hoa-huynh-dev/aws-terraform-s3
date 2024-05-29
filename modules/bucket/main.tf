@@ -34,14 +34,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration
   bucket = aws_s3_bucket.bucket.bucket
   dynamic "rule" {
     for_each = var.bucket_lifecycle_rules
-    iterator = "rule"
     content {
       id     = rule.value.id
       status = rule.value.status
 
       dynamic "transition" {
         for_each = rule.value.transitions
-        iterator = "transition"
         content {
           days          = transition.value.days
           storage_class = transition.value.storage_class
