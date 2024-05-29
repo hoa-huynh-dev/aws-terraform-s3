@@ -30,17 +30,23 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration" {
+  count  = length(var.bucket_lifecycle_rules) == 0 ? 0 : 1
   bucket = aws_s3_bucket.bucket.bucket
-  rule {
-    id     = "rule"
-    status = "Enabled"
-    transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
-    }
-    transition {
-      days          = 60
-      storage_class = "GLACIER"
+  dynamic "rule" {
+    for_each = var.bucket_lifecycle_rules
+    iterator = "rule"
+    content {
+      id     = rule.value.id
+      status = rule.value.status
+
+      dynamic "transition" {
+        for_each = rule.value.transitions
+        iterator = "transition"
+        content {
+          days          = transition.value.days
+          storage_class = transition.value.storage_class
+        }
+      }
     }
   }
 }

@@ -30,3 +30,23 @@ variable "bucket_policy_document" {
   type    = string
   default = null
 }
+
+variable "bucket_lifecycle_rules" {
+  type = list(object(map()))
+  default = [
+    {
+      id     = "rule"
+      status = "Enabled"
+      transitions = [
+        {
+          days          = 60
+          storage_class = "STANDARD_IA"
+        },
+        {
+          days          = 90
+          storage_class = "GLACIER"
+        }
+      ]
+    }
+  ]
+}
