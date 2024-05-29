@@ -28,3 +28,19 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.bucket
   policy = var.bucket_policy_document
 }
+
+resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration" {
+  bucket = aws_s3_bucket.bucket.bucket
+  rule {
+    id     = "rule"
+    status = "Enabled"
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"
+    }
+    transition {
+      days          = 60
+      storage_class = "GLACIER"
+    }
+  }
+}
