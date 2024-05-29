@@ -37,6 +37,7 @@ variable "bucket_lifecycle_rules" {
       {
         id     = string
         status = string
+        prefix = string
         transitions = list(
           object(
             {

@@ -32,11 +32,16 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration" {
   count  = length(var.bucket_lifecycle_rules) == 0 ? 0 : 1
   bucket = aws_s3_bucket.bucket.bucket
+
   dynamic "rule" {
     for_each = var.bucket_lifecycle_rules
     content {
       id     = rule.value.id
       status = rule.value.status
+
+      filter {
+        prefix = rule.value.prefix == null ? "" : rule.value.prefix
+      }
 
       dynamic "transition" {
         for_each = rule.value.transitions
