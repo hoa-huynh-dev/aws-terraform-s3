@@ -29,14 +29,10 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   policy = var.bucket_policy_document
 }
 
-resource "random_id" "rule_id" {
-  byte_length = 8
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration" {
   bucket = aws_s3_bucket.bucket.bucket
   rule {
-    id     = "rule-${random_id.rule_id.b64_std}"
+    id     = "rule"
     status = "Enabled"
     transition {
       days          = 30
