@@ -36,7 +36,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration
   dynamic "rule" {
     for_each = var.bucket_lifecycle_rules
     content {
-      id     = "${var.bucket_prefix}-${var.bucket_name}-rule-${rule.key}"
+      id     = "${var.bucket_prefix}-${var.bucket_name}-lifecycle-rule-${rule.key}"
       status = "Enabled"
 
       filter {
