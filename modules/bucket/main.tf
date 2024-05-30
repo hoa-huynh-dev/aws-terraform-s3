@@ -112,7 +112,7 @@ data "aws_sqs_queue" "queue" {
 
 resource "aws_sqs_queue_policy" "queue_policy" {
   queue_url = data.aws_sqs_queue.queue.url
-  policy    = data.aws_iam_policy_document.sqs_iam_policy
+  policy    = data.aws_iam_policy_document.sqs_iam_policy.json
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
