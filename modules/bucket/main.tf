@@ -110,6 +110,11 @@ data "aws_sqs_queue" "queue" {
   name = local.bucket_notification_queue_name
 }
 
+resource "aws_sqs_queue_policy" "queue_policy" {
+  queue_url = data.aws_sqs_queue.queue.url
+  policy    = data.aws_iam_policy_document.sqs_iam_policy
+}
+
 resource "aws_s3_bucket_notification" "bucket_notification" {
   count  = var.bucket_notification_sqs == null ? 0 : 1
   bucket = aws_s3_bucket.bucket.bucket
