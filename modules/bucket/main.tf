@@ -120,7 +120,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.bucket.bucket
 
   queue {
-    queue_arn     = aws_sqs_queue.queue.arn
+    queue_arn     = data.aws_sqs_queue.queue.arn
     events        = ["s3:ObjectCreated:*"]
     filter_prefix = var.bucket_notification_sqs.filter_prefix
     filter_suffix = var.bucket_notification_sqs.filter_suffix
