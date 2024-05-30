@@ -45,3 +45,8 @@ variable "bucket_lifecycle_rules" {
   )
   default = []
 }
+
+variable "sse_algorithm" {
+  type    = string
+  default = "AES256"
+}
