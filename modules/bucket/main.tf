@@ -1,6 +1,6 @@
 locals {
   bucket_name                    = "${var.bucket_prefix}-${var.bucket_name}"
-  bucket_notification_queue_name = var.bucket_notification_sqs.queue_name == null ? "" : var.bucket_notification_sqs.queue_name
+  bucket_notification_queue_name = var.bucket_notification_sqs == null ? "" : var.bucket_notification_sqs.queue_name == null ? "" : var.bucket_notification_sqs.queue_name
 }
 
 resource "aws_s3_bucket" "bucket" {
