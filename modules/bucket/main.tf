@@ -1,5 +1,6 @@
 locals {
-  bucket_name = "${var.bucket_prefix}-${var.bucket_name}"
+  bucket_name                    = "${var.bucket_prefix}-${var.bucket_name}"
+  bucket_notification_queue_name = var.bucket_notification_sqs.queue_name == null ? "" : var.bucket_notification_sqs.queue_name
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -86,7 +87,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_server_sid
 }
 
 data "aws_iam_policy_document" "sqs_iam_policy" {
-  count = var.bucket_notification_sqs == null ? 0 : 1
   statement {
     effect = "Allow"
 
@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
     }
 
     actions   = ["sqs:SendMessage"]
-    resources = ["arn:aws:sqs:*:*:${var.bucket_notification_sqs.queue_name}"]
+    resources = [data.aws_sqs_queue.queue.arn]
 
     condition {
       test     = "ArnEquals"
@@ -106,10 +106,8 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
   }
 }
 
-resource "aws_sqs_queue" "queue" {
-  count  = var.bucket_notification_sqs == null ? 0 : 1
-  name   = var.bucket_notification_sqs.queue_name
-  policy = data.aws_iam_policy_document.sqs_iam_policy.json
+data "aws_sqs_queue" "queue" {
+  name = local.bucket_notification_queue_name
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
