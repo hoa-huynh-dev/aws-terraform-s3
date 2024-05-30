@@ -109,7 +109,7 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
 resource "aws_sqs_queue" "queue" {
   count  = var.bucket_notification_sqs == null ? 0 : 1
   name   = var.bucket_notification_sqs.queue_name
-  policy = data.aws_iam_policy_document.queue.json
+  policy = data.aws_iam_policy_document.sqs_iam_policy.json
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
