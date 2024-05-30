@@ -35,17 +35,11 @@ variable "bucket_lifecycle_rules" {
   type = list(
     object(
       {
-        id     = string
-        status = string
-        prefix = string
-        transitions = list(
-          object(
-            {
-              days          = number
-              storage_class = string
-            }
-          )
-        )
+        prefix : string
+        current_version_transitions : map(string)
+        current_version_expiration : number
+        noncurrent_version_transitions : map(string)
+        noncurrent_version_expiration : number
       }
     )
   )

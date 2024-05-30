@@ -36,18 +36,40 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration
   dynamic "rule" {
     for_each = var.bucket_lifecycle_rules
     content {
-      id     = rule.value.id
-      status = rule.value.status
+      id     = "${var.bucket_prefix}-${var.bucket_name}-rule-${rule.key}"
+      status = "Enabled"
 
       filter {
-        prefix = rule.value.prefix == null ? "" : rule.value.prefix
+        prefix = rule.value.prefix
       }
 
       dynamic "transition" {
         for_each = rule.value.transitions
         content {
-          days          = transition.value.days
-          storage_class = transition.value.storage_class
+          storage_class = transition.key
+          days          = transition.value
+        }
+      }
+
+      dynamic "expiration" {
+        for_each = rule.value.current_version_expiration > 0 ? [1] : []
+        content {
+          days = rule.value.current_version_expiration
+        }
+      }
+
+      dynamic "noncurrent_version_transition" {
+        for_each = rule.value.noncurrent_version_transitions
+        content {
+          storage_class   = transition.key
+          noncurrent_days = transition.value
+        }
+      }
+
+      dynamic "noncurrent_version_expiration" {
+        for_each = rule.value.noncurrent_version_expiration > 0 ? [1] : []
+        content {
+          noncurrent_days = rule.value.noncurrent_version_expiration
         }
       }
     }
