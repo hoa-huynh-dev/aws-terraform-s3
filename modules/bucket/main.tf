@@ -44,7 +44,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration
       }
 
       dynamic "transition" {
-        for_each = rule.value.transitions
+        for_each = rule.value.current_version_transitions
         content {
           storage_class = transition.key
           days          = transition.value
@@ -61,8 +61,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket_lifecycle_configuration
       dynamic "noncurrent_version_transition" {
         for_each = rule.value.noncurrent_version_transitions
         content {
-          storage_class   = transition.key
-          noncurrent_days = transition.value
+          storage_class   = noncurrent_version_transition.key
+          noncurrent_days = noncurrent_version_transition.value
         }
       }
 
