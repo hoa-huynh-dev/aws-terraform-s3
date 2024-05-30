@@ -50,3 +50,12 @@ variable "sse_algorithm" {
   type    = string
   default = "AES256"
 }
+
+variable "bucket_notification_sqs" {
+  type = object({
+    queue_name : string
+    filter_prefix : string
+    filter_suffix : string
+  })
+  default = null
+}

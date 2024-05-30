@@ -84,3 +84,42 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_server_sid
     }
   }
 }
+
+data "aws_iam_policy_document" "sqs_iam_policy" {
+  count = var.bucket_notification_sqs == null ? 0 : 1
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    actions   = ["sqs:SendMessage"]
+    resources = ["arn:aws:sqs:*:*:${var.bucket_notification_sqs.queue_name}"]
+
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_s3_bucket.bucket.arn]
+    }
+  }
+}
+
+resource "aws_sqs_queue" "queue" {
+  count  = var.bucket_notification_sqs == null ? 0 : 1
+  name   = var.bucket_notification_sqs.queue_name
+  policy = data.aws_iam_policy_document.queue.json
+}
+
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  count  = var.bucket_notification_sqs == null ? 0 : 1
+  bucket = aws_s3_bucket.bucket.bucket
+
+  queue {
+    queue_arn     = aws_sqs_queue.queue.arn
+    events        = ["s3:ObjectCreated:*"]
+    filter_prefix = var.bucket_notification_sqs.filter_prefix
+    filter_suffix = var.bucket_notification_sqs.filter_suffix
+  }
+}
