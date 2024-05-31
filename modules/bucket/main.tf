@@ -1,6 +1,6 @@
 locals {
-  bucket_name                    = "${var.bucket_prefix}-${var.bucket_name}"
-  bucket_notification_queue_name = var.bucket_notification_sqs == null ? "" : var.bucket_notification_sqs.queue_name == null ? "" : var.bucket_notification_sqs.queue_name
+  bucket_name                   = "${var.bucket_prefix}-${var.bucket_name}"
+  bucket_notification_sqs_count = var.bucket_notification_sqs != null ? (var.bucket_notification_sqs.queue_name != null ? 1 : 0) : 0
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -87,6 +87,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_server_sid
 }
 
 data "aws_iam_policy_document" "sqs_iam_policy" {
+  count = local.bucket_notification_sqs_count
   statement {
     effect = "Allow"
 
@@ -107,21 +108,23 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
 }
 
 data "aws_sqs_queue" "queue" {
-  name = local.bucket_notification_queue_name
+  count = local.bucket_notification_sqs_count
+  name  = var.bucket_notification_sqs.queue_name
 }
 
 resource "aws_sqs_queue_policy" "queue_policy" {
+  count     = local.bucket_notification_sqs_count
   queue_url = data.aws_sqs_queue.queue.url
   policy    = data.aws_iam_policy_document.sqs_iam_policy.json
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  count  = var.bucket_notification_sqs == null ? 0 : 1
+  count  = local.bucket_notification_sqs_count
   bucket = aws_s3_bucket.bucket.bucket
 
   queue {
     queue_arn     = data.aws_sqs_queue.queue.arn
-    events        = ["s3:ObjectCreated:*"]
+    events        = var.bucket_notification_sqs.events
     filter_prefix = var.bucket_notification_sqs.filter_prefix
     filter_suffix = var.bucket_notification_sqs.filter_suffix
   }

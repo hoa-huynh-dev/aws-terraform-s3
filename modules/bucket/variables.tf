@@ -35,11 +35,11 @@ variable "bucket_lifecycle_rules" {
   type = list(
     object(
       {
-        prefix : string
-        current_version_transitions : map(string)
-        current_version_expiration : number
-        noncurrent_version_transitions : map(string)
-        noncurrent_version_expiration : number
+        prefix                         = string
+        current_version_transitions    = map(string)
+        current_version_expiration     = number
+        noncurrent_version_transitions = map(string)
+        noncurrent_version_expiration  = number
       }
     )
   )
@@ -53,9 +53,10 @@ variable "sse_algorithm" {
 
 variable "bucket_notification_sqs" {
   type = object({
-    queue_name : string
-    filter_prefix : string
-    filter_suffix : string
+    queue_name    = string
+    events        = list(string)
+    filter_prefix = string
+    filter_suffix = string
   })
   default = null
 }
