@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
     }
 
     actions   = ["sqs:SendMessage"]
-    resources = data.aws_sqs_queue.queue.*.arn
+    resources = [data.aws_sqs_queue.queue[0].arn]
 
     condition {
       test     = "ArnEquals"
@@ -114,8 +114,8 @@ data "aws_sqs_queue" "queue" {
 
 resource "aws_sqs_queue_policy" "queue_policy" {
   count     = local.bucket_notification_sqs_count
-  queue_url = data.aws_sqs_queue.queue.url
-  policy    = data.aws_iam_policy_document.sqs_iam_policy.json
+  queue_url = data.aws_sqs_queue.queue[0].url
+  policy    = data.aws_iam_policy_document.sqs_iam_policy[0].json
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
