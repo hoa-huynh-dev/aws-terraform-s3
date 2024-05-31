@@ -97,7 +97,7 @@ data "aws_iam_policy_document" "sqs_iam_policy" {
     }
 
     actions   = ["sqs:SendMessage"]
-    resources = data.aws_sqs_queue.*.arn
+    resources = data.aws_sqs_queue.queue.*.arn
 
     condition {
       test     = "ArnEquals"
